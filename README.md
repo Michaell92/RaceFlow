@@ -1,6 +1,14 @@
 # RaceFlow
 
-This template should help get you started developing with Vue 3 in Vite.
+This is a horse racing simulation game written with Vue 3, TypeScript and Quasar. Vite as bundler and Cypress/Vitest for testing.
+
+It is architected following a DDD (Domain-Driven Design) approach for scalability and maintainability.
+Domain logic is separated into modules and shared code goes into the shared folder.
+
+Development plan is outlined in `plan.md`.
+Coding guidelines are written in `CLAUDE.md`.
+
+## Setup guidelines
 
 ## Recommended IDE Setup
 
@@ -14,14 +22,6 @@ This template should help get you started developing with Vue 3 in Vite.
 - Firefox:
   - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
   - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
 
 ## Project Setup
 
