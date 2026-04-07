@@ -91,6 +91,6 @@ Never add interfaces or types in `.vue` files. Place them in the relevant domain
 
 ## CSS
 
-Use scoped styles in components, avoid global CSS. Use BEM naming for classes. Prefer Quasar components and utilities over custom CSS when possible.
+Use scoped styles in components, avoid global CSS. Use BEM naming for classes and scss for nesting. Prefer Quasar components and utilities over custom CSS when possible.
 DON'T USE CSS PIXELS, USE REM FOR EVERYTHING.
 DON'T BUILD PROJECT AFTER DOING ANYTHING.
