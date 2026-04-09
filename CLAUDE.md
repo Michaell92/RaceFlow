@@ -75,6 +75,10 @@ If a module needs another module's file, import it directly (e.g., `@/modules/Ho
 └─ /assets
 ```
 
+## Coding style
+
+Always write template first, followed by script and styles.
+
 ## File Naming Conventions
 
 - Types: `{domain}.types.ts` (e.g., `horse.types.ts`, `race.types.ts`)

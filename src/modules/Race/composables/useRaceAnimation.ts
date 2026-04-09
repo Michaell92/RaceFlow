@@ -78,65 +78,74 @@ export function useRaceAnimation(
    * Core animation loop — called every frame by requestAnimationFrame.
    * Updates each horse's position based on elapsed time and their speed.
    */
-  function tick(timestamp: number): void {
+  function tick(frameTimestamp: number): void {
     if (!isRunning.value) return
 
     // Total elapsed time including any paused segments
-    const elapsed = timestamp - startTime + pausedElapsed
+    const elapsedMs = frameTimestamp - startTime + pausedElapsed
 
     // Scale race duration proportionally: 2200m takes longer than 1200m
-    const raceDuration = (distance.value / BASE_DISTANCE) * BASE_DURATION_MS
+    const raceDurationMs = (distance.value / BASE_DISTANCE) * BASE_DURATION_MS
     const totalHorses = entries.value.length
-    const positions = new Map<number, number>()
+    const updatedPositions = new Map<number, number>()
 
     for (const entry of entries.value) {
-      const state = horseStates.get(entry.horse.id)
-      if (!state) continue
+      const horseState = horseStates.get(entry.horse.id)
+      if (!horseState) continue
 
       // Already finished — pin at 100%
-      if (state.finishTimeMs !== null) {
-        positions.set(entry.horse.id, 100)
+      if (horseState.finishTimeMs !== null) {
+        updatedPositions.set(entry.horse.id, 100)
         continue
       }
 
       // Re-roll speed variance every VARIANCE_INTERVAL_MS for natural jittery movement
-      if (elapsed - state.lastVarianceTime > VARIANCE_INTERVAL_MS) {
-        state.speed = (entry.horse.condition / 100) * getRandomVariance()
-        state.lastVarianceTime = elapsed
+      const timeSinceLastVariance = elapsedMs - horseState.lastVarianceTime
+      if (timeSinceLastVariance > VARIANCE_INTERVAL_MS) {
+        horseState.speed = (entry.horse.condition / 100) * getRandomVariance()
+        horseState.lastVarianceTime = elapsedMs
       }
 
-      // progress = (time fraction) × horse speed, clamped to 100
-      const baseProgress = (elapsed / raceDuration) * 100
-      state.progress = Math.min(baseProgress * state.speed, 100)
-      positions.set(entry.horse.id, state.progress)
+      // How much of the total race time has passed (0.0 → 1.0)
+      const fractionOfRaceCompleted = elapsedMs / raceDurationMs
+      // Convert to percentage and apply horse's speed multiplier
+      const adjustedProgressPercent = fractionOfRaceCompleted * 100 * horseState.speed
+      // Cap at 100% — can't go past the finish line
+      horseState.progress = Math.min(adjustedProgressPercent, 100)
+      updatedPositions.set(entry.horse.id, horseState.progress)
 
       // Horse just crossed the finish line
-      if (state.progress >= 100) {
-        state.finishTimeMs = elapsed
-        finishedHorses.push({ horseId: entry.horse.id, finishTimeMs: elapsed })
+      if (horseState.progress >= 100) {
+        horseState.finishTimeMs = elapsedMs
+        finishedHorses.push({ horseId: entry.horse.id, finishTimeMs: elapsedMs })
       }
     }
 
     // Advance sprite frame on interval (shared across all horses)
-    if (timestamp - lastFrameSwitch >= FRAME_INTERVAL_MS) {
-      frameCursor.value = (frameCursor.value + 1) % FRAME_COUNT
-      lastFrameSwitch = timestamp
+    // Loops back to frame 0 after reaching the last frame (16 → 0)
+    const timeSinceLastFrame = frameTimestamp - lastFrameSwitch
+    if (timeSinceLastFrame >= FRAME_INTERVAL_MS) {
+      const nextFrame = frameCursor.value + 1
+      frameCursor.value = nextFrame >= FRAME_COUNT ? 0 : nextFrame
+      lastFrameSwitch = frameTimestamp
     }
 
-    horsePositions.value = positions
+    horsePositions.value = updatedPositions
 
     // All horses finished — sort by finish time and report results
     if (finishedHorses.length >= totalHorses) {
       isRunning.value = false
       animationFrameId = null
 
-      const sorted = [...finishedHorses].sort((a, b) => a.finishTimeMs - b.finishTimeMs)
-      const entryMap = new Map(entries.value.map((e) => [e.horse.id, e]))
+      const sortedByFinishTime = [...finishedHorses].sort(
+        (first, second) => first.finishTimeMs - second.finishTimeMs,
+      )
+      const entryByHorseId = new Map(entries.value.map((entry) => [entry.horse.id, entry]))
 
-      const results: RaceResult[] = sorted.map((fh, index) => ({
+      const results: RaceResult[] = sortedByFinishTime.map((finishedHorse, index) => ({
         position: index + 1,
-        horse: entryMap.get(fh.horseId)!.horse,
-        finishTimeMs: fh.finishTimeMs,
+        horse: entryByHorseId.get(finishedHorse.horseId)!.horse,
+        finishTimeMs: finishedHorse.finishTimeMs,
       }))
 
       onRaceComplete(results)
@@ -153,9 +162,9 @@ export function useRaceAnimation(
     pausedElapsed = 0
     isRunning.value = true
     lastFrameSwitch = 0
-    animationFrameId = requestAnimationFrame((ts) => {
-      startTime = ts
-      tick(ts)
+    animationFrameId = requestAnimationFrame((firstFrameTimestamp) => {
+      startTime = firstFrameTimestamp
+      tick(firstFrameTimestamp)
     })
   }
 
@@ -174,9 +183,9 @@ export function useRaceAnimation(
   function resume(): void {
     if (isRunning.value) return
     isRunning.value = true
-    animationFrameId = requestAnimationFrame((ts) => {
-      startTime = ts
-      tick(ts)
+    animationFrameId = requestAnimationFrame((resumeTimestamp) => {
+      startTime = resumeTimestamp
+      tick(resumeTimestamp)
     })
   }
 
