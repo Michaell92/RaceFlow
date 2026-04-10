@@ -54,7 +54,7 @@ export function generateHorses(): Horse[] {
   return HORSE_NAMES.map((name, index) => ({
     id: index + 1,
     name,
-    color: HORSE_COLORS[index],
+    color: HORSE_COLORS[index] || '#000000',
     condition: getRandomCondition(),
   }))
 }

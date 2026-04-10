@@ -13,13 +13,12 @@
         :distance="currentDistance"
       />
     </div>
-    <div class="race-view__right">
-      <RaceProgram
-        :schedule="raceStore.schedule"
-        :current-round-index="raceStore.currentRoundIndex"
-      />
-      <RaceResults :results="raceStore.results" />
-    </div>
+
+    <RaceViewSidebar
+      :schedule="raceStore.schedule"
+      :current-round-index="raceStore.currentRoundIndex"
+      :results="raceStore.results"
+    />
   </div>
 </template>
 
@@ -32,8 +31,7 @@ import { GameStatus } from '@/modules/Race/types/race.types'
 import type { RaceResult } from '@/modules/Race/types/race.types'
 import HorseListTable from '@/modules/Horse/components/HorseListTable.vue'
 import RaceTrack from '@/modules/Race/components/RaceTrack.vue'
-import RaceProgram from '@/modules/Race/components/RaceProgram.vue'
-import RaceResults from '@/modules/Race/components/RaceResults.vue'
+import RaceViewSidebar from '@/modules/Race/components/RaceViewSidebar.vue'
 
 /* === Stores === */
 const horseStore = useHorseStore()
@@ -106,17 +104,7 @@ function handleRoundComplete(raceResults: RaceResult[]) {
     min-width: 0;
   }
 
-  &__right {
-    width: 22rem;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    overflow: auto;
-  }
-
-  // Tablet: track on top full-width, horse list + program/results split bottom
-  @media (max-width: 64rem) {
+  @media (max-width: 78rem) {
     flex-wrap: wrap;
 
     &__center {
@@ -127,36 +115,19 @@ function handleRoundComplete(raceResults: RaceResult[]) {
 
     &__left {
       width: 0;
-      flex: 1 1 40%;
-    }
-
-    &__right {
-      width: 0;
-      flex: 1 1 55%;
+      flex: 1 1 100%;
     }
   }
 
-  // Mobile: track full-width top, horse list + program/results in 2-col bottom
   @media (max-width: 37.5rem) {
-    flex-wrap: wrap;
     padding: 0.5rem;
     gap: 0.5rem;
 
     &__center {
-      order: -1;
-      flex: 1 1 100%;
       min-height: 16rem;
     }
 
     &__left {
-      width: 0;
-      flex: 1 1 45%;
-      max-height: 20rem;
-    }
-
-    &__right {
-      width: 0;
-      flex: 1 1 50%;
       max-height: 20rem;
     }
   }

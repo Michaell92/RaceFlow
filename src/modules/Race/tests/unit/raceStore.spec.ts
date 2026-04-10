@@ -119,8 +119,8 @@ describe('raceStore', () => {
       raceStore.completeRound(mockResults)
 
       expect(raceStore.results).toHaveLength(1)
-      expect(raceStore.results[0].roundNumber).toBe(1)
-      expect(raceStore.results[0].results).toEqual(mockResults)
+      expect(raceStore.results[0]?.roundNumber).toBe(1)
+      expect(raceStore.results[0]?.results).toEqual(mockResults)
       expect(raceStore.gameState).toBe(GameStatus.ROUND_FINISHED)
     })
 
@@ -166,7 +166,7 @@ describe('raceStore', () => {
       const raceStore = useRaceStore()
       raceStore.generateProgram()
 
-      expect(raceStore.currentRoundConfig).toEqual(raceStore.schedule[0].config)
+      expect(raceStore.currentRoundConfig).toEqual(raceStore.schedule[0]?.config)
     })
 
     it('isLastRound is false at the start', () => {

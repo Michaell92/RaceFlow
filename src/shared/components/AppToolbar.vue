@@ -23,30 +23,34 @@
       @update:model-value="$emit('update:autoPlay', $event)"
     />
 
-    <q-btn
-      label="Generate Program"
-      color="amber-8"
-      text-color="dark"
-      no-caps
-      unelevated
-      icon="casino"
-      :disable="isGenerateDisabled"
-      padding="0.5rem 1.25rem"
-      class="q-mr-sm app-toolbar__btn"
-      @click="$emit('generate')"
-    />
+    <div class="app-toolbar__actions">
+      <q-btn
+        label="Generate Program"
+        color="amber-8"
+        text-color="dark"
+        no-caps
+        no-wrap
+        unelevated
+        icon="casino"
+        :disable="isGenerateDisabled"
+        padding="0.5rem 1.25rem"
+        class="app-toolbar__btn"
+        @click="$emit('generate')"
+      />
 
-    <q-btn
-      :label="raceButtonLabel"
-      :color="raceButtonColor"
-      :icon="raceButtonIcon"
-      :disable="isRaceDisabled"
-      no-caps
-      unelevated
-      padding="0.5rem 1.25rem"
-      class="app-toolbar__btn"
-      @click="$emit('toggleRace')"
-    />
+      <q-btn
+        :label="raceButtonLabel"
+        :color="raceButtonColor"
+        :icon="raceButtonIcon"
+        :disable="isRaceDisabled"
+        no-caps
+        no-wrap
+        unelevated
+        padding="0.5rem 1.25rem"
+        class="app-toolbar__btn"
+        @click="$emit('toggleRace')"
+      />
+    </div>
   </q-toolbar>
 </template>
 
@@ -159,6 +163,12 @@ const statusColor = computed(() => {
     font-size: 0.875rem;
     font-weight: 600;
     border-radius: 0.5rem;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
   }
 
   &__status {

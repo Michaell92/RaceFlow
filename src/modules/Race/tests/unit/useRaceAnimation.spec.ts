@@ -126,7 +126,7 @@ describe('useRaceAnimation', () => {
     flushRaf(20_000)
 
     expect(onComplete).toHaveBeenCalledOnce()
-    const results: RaceResult[] = onComplete.mock.calls[0][0]
+    const results: RaceResult[] = onComplete.mock.calls[0]?.[0]
     expect(results).toHaveLength(2)
     results.forEach((r, i) => {
       expect(r.position).toBe(i + 1)
@@ -145,9 +145,10 @@ describe('useRaceAnimation', () => {
     flushRaf(0)
     flushRaf(20_000)
 
-    const results: RaceResult[] = onComplete.mock.calls[0][0]
+    const results: RaceResult[] = onComplete.mock.calls[0]?.[0]
+
     for (let i = 1; i < results.length; i++) {
-      expect(results[i].finishTimeMs).toBeGreaterThanOrEqual(results[i - 1].finishTimeMs)
+      expect(results[i]?.finishTimeMs).toBeGreaterThanOrEqual(results[i - 1]?.finishTimeMs || 0)
     }
   })
 
