@@ -289,6 +289,22 @@ IDLE → [Generate Program] → READY → [Start] → RACING → [round ends] �
 
 ## Further Considerations
 
-1. **Horse sprites**: SVG silhouette with dynamic color fill for best visual quality while keeping it simple.
-2. **Race result calculation**: Horse condition heavily influences speed but a random factor prevents deterministic outcomes. The random factor should be re-rolled periodically during the race (not just once) to create natural-looking speed variations.
-3. **Round distance visual**: The track can show a distance label and a proportional finish line position, but the actual visual track width stays the same — longer distances just mean longer animation duration.
+If we had a lot of horses ( 500+ ), we would switch to canvas for a more controlled GPU usage.
+
+---
+
+## Post-Completion Refinements
+
+Changes made during code quality review after all phases were complete:
+
+### Bug Fixes
+
+- **`BASE_DURATION_MS` typo** — was `15_00` (1.5s), corrected to `15_000` (15s) in `useRaceAnimation.ts`
+- **ESLint vitest glob** — changed from `src/**/__tests__/*` to `src/**/tests/**/*.spec.{ts,js}` to match actual test file locations
+- **`tsconfig.vitest.json` include** — changed from `src/**/__tests__/*` to `src/**/tests/**/*.spec.ts`
+- **`tsconfig.app.json` exclude** — changed from `src/**/__tests__/*` to `src/**/tests/**`
+
+### Architecture Improvements
+
+- **RaceEngine: class → plain functions** — `selectRandomHorses()` and `generateSchedule()` are now exported functions instead of methods on a stateless class. No instance state = no reason for a class. Updated store import and all tests accordingly.
+- **RaceHorse: `marginLeft` → `transform: translateX`** — GPU-composited positioning instead of layout-triggering `marginLeft`. Horse element is now `position: absolute; width: 100%; height: 100%` so `translateX(N%)` maps to N% of the lane width. `will-change: transform` pre-promotes to compositor layer. RaceTrack `__lane-track` updated with `position: relative`.

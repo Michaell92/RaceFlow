@@ -62,23 +62,22 @@ const { horsePositions, frameCursor, isRunning, start, pause, resume, stop } = u
 watch(
   () => raceStore.gameState,
   (status, oldStatus) => {
-    if (status === GameStatus.RACING && oldStatus === GameStatus.PAUSED) {
-      resume()
-    } else if (status === GameStatus.RACING) {
-      start()
-    } else if (status === GameStatus.PAUSED) {
-      pause()
-    } else if (
-      status === GameStatus.READY ||
-      status === GameStatus.ROUND_FINISHED ||
-      status === GameStatus.FINISHED
-    ) {
-      stop()
-    }
-
-    if (!raceStore.autoPlay) return
-    if (status === GameStatus.READY || status === GameStatus.ROUND_FINISHED) {
-      raceStore.startRace()
+    switch (status) {
+      case GameStatus.RACING:
+        if (oldStatus === GameStatus.PAUSED) resume()
+        else start()
+        break
+      case GameStatus.PAUSED:
+        pause()
+        break
+      case GameStatus.READY:
+      case GameStatus.ROUND_FINISHED:
+        stop()
+        if (raceStore.autoPlay) raceStore.startRace()
+        break
+      case GameStatus.FINISHED:
+        stop()
+        break
     }
   },
 )

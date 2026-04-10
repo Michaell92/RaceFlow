@@ -6,11 +6,9 @@ import {
   type RoundResult,
   type RoundSchedule,
 } from '@/modules/Race/types/race.types'
-import { RaceEngine } from '@/modules/Race/services/RaceEngine'
+import { generateSchedule } from '@/modules/Race/services/RaceEngine'
 import { TOTAL_ROUNDS } from '@/modules/Race/utils/raceConfig'
 import { useHorseStore } from '@/modules/Horse/stores/horseStore'
-
-const engine = new RaceEngine()
 
 export const useRaceStore = defineStore('race', () => {
   /* === State === */
@@ -31,7 +29,7 @@ export const useRaceStore = defineStore('race', () => {
   function generateProgram(): void {
     const horseStore = useHorseStore()
 
-    schedule.value = engine.generateSchedule(horseStore.horses)
+    schedule.value = generateSchedule(horseStore.horses)
     results.value = []
     currentRoundIndex.value = 0
     gameState.value = GameStatus.READY

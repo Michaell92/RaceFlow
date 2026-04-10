@@ -149,8 +149,7 @@ defineProps<{
 
   &__lane-track {
     flex: 1;
-    display: flex;
-    align-items: center;
+    position: relative;
     // Leave room for the horse sprite to not overflow the finish line visually
     padding-right: 3.5rem;
   }

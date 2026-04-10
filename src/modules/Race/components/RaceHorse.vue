@@ -1,5 +1,5 @@
 <template>
-  <div class="race-horse" :style="{ marginLeft: `${position}%` }">
+  <div class="race-horse" :style="{ transform: `translateX(${position}%)` }">
     <div class="race-horse__sprite">
       <component :is="currentFrame" :color="color" />
     </div>
@@ -64,10 +64,15 @@ const currentFrame = computed(() => {
 
 <style scoped lang="scss">
 .race-horse {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  will-change: margin-left;
+  will-change: transform;
 
   &__sprite {
     width: auto;

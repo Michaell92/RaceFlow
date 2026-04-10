@@ -1,26 +1,25 @@
 import { describe, it, expect } from 'vitest'
-import { RaceEngine } from '@/modules/Race/services/RaceEngine'
+import { selectRandomHorses, generateSchedule } from '@/modules/Race/services/RaceEngine'
 import { generateHorses } from '@/modules/Horse/utils/horseGenerator'
 import { HORSES_PER_ROUND, ROUND_DISTANCES, TOTAL_ROUNDS } from '@/modules/Race/utils/raceConfig'
 
 describe('RaceEngine', () => {
-  const engine = new RaceEngine()
   const horses = generateHorses()
 
   describe('selectRandomHorses', () => {
     it('returns the correct number of horses', () => {
-      const selected = engine.selectRandomHorses(horses, 10)
+      const selected = selectRandomHorses(horses, 10)
       expect(selected).toHaveLength(10)
     })
 
     it('returns no duplicate horses', () => {
-      const selected = engine.selectRandomHorses(horses, 10)
+      const selected = selectRandomHorses(horses, 10)
       const ids = selected.map((h) => h.id)
       expect(new Set(ids).size).toBe(10)
     })
 
     it('only returns horses from the original pool', () => {
-      const selected = engine.selectRandomHorses(horses, 10)
+      const selected = selectRandomHorses(horses, 10)
       const allIds = new Set(horses.map((h) => h.id))
       selected.forEach((horse) => {
         expect(allIds.has(horse.id)).toBe(true)
@@ -28,26 +27,26 @@ describe('RaceEngine', () => {
     })
 
     it('throws when requesting more horses than available', () => {
-      expect(() => engine.selectRandomHorses(horses, 21)).toThrow(
+      expect(() => selectRandomHorses(horses, 21)).toThrow(
         'Cannot select 21 horses from a pool of 20',
       )
     })
 
     it('returns all horses when count equals pool size', () => {
-      const selected = engine.selectRandomHorses(horses, 20)
+      const selected = selectRandomHorses(horses, 20)
       expect(selected).toHaveLength(20)
     })
 
     it('produces varied selections across calls (randomness)', () => {
-      const first = engine.selectRandomHorses(horses, 10).map((h) => h.id)
-      const second = engine.selectRandomHorses(horses, 10).map((h) => h.id)
+      const first = selectRandomHorses(horses, 10).map((h) => h.id)
+      const second = selectRandomHorses(horses, 10).map((h) => h.id)
       const allMatch = first.every((id, i) => id === second[i])
       expect(allMatch).toBe(false)
     })
   })
 
   describe('generateSchedule', () => {
-    const schedule = engine.generateSchedule(horses)
+    const schedule = generateSchedule(horses)
 
     it('creates exactly 6 rounds', () => {
       expect(schedule).toHaveLength(TOTAL_ROUNDS)
