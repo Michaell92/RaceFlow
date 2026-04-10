@@ -7,7 +7,8 @@ const FRAME_COUNT = 16 // Total sprite frames per gallop cycle (frame_01..frame_
 const BASE_DURATION_MS = 15_000 // How long (ms) a 1200m race takes at condition=100 & variance=1
 const BASE_DISTANCE = 1200 // Reference distance that maps to BASE_DURATION_MS
 const SPEED_VARIANCE_MIN = 0.85 // Min random multiplier applied to horse speed
-const SPEED_VARIANCE_MAX = 1.15 // Max random multiplier applied to horse speed
+const SPEED_VARIANCE_MAX_STRONG = 1.4 // Max variance for condition=100 (stable)
+const SPEED_VARIANCE_MAX_WEAK = 2.5 // Max variance for condition=1 (upset potential)
 const VARIANCE_INTERVAL_MS = 500 // Re-roll speed variance every 500ms for natural movement
 const FRAME_INTERVAL_MS = 60 // Switch sprite frame every 60ms (~16 FPS gallop animation)
 
@@ -46,12 +47,23 @@ export function useRaceAnimation(
   let animationFrameId: number | null = null
   let startTime = 0 // rAF timestamp when race started / resumed
   let pausedElapsed = 0 // Accumulated elapsed time before current resume
+  let lastTickTime = 0 // rAF timestamp of the previous tick (for delta calculation)
   const horseStates = new Map<number, HorseState>()
   let finishedHorses: { horseId: number; finishTimeMs: number }[] = []
   let lastFrameSwitch = 0 // rAF timestamp of last sprite frame switch
 
-  function getRandomVariance(): number {
-    return SPEED_VARIANCE_MIN + Math.random() * (SPEED_VARIANCE_MAX - SPEED_VARIANCE_MIN)
+  function getRandomVariance(condition: number): number {
+    // Low condition → higher max variance, high condition → stable
+    const conditionFactor = 1 - condition / 100
+    const varianceMax =
+      SPEED_VARIANCE_MAX_STRONG +
+      conditionFactor * (SPEED_VARIANCE_MAX_WEAK - SPEED_VARIANCE_MAX_STRONG)
+    return SPEED_VARIANCE_MIN + Math.random() * (varianceMax - SPEED_VARIANCE_MIN)
+  }
+
+  /** Compress condition into 0.5–1.0 range so weak horses aren't impossibly slow */
+  function getBaseSpeed(condition: number): number {
+    return 0.5 + 0.5 * (condition / 100)
   }
 
   /** Reset all horse states to starting positions before a new race */
@@ -61,7 +73,8 @@ export function useRaceAnimation(
     const positions = new Map<number, number>()
 
     for (const entry of entries.value) {
-      const baseSpeed = (entry.horse.condition / 100) * getRandomVariance()
+      const baseSpeed =
+        getBaseSpeed(entry.horse.condition) * getRandomVariance(entry.horse.condition)
       horseStates.set(entry.horse.id, {
         progress: 0,
         speed: baseSpeed,
@@ -83,6 +96,9 @@ export function useRaceAnimation(
 
     // Total elapsed time including any paused segments
     const elapsedMs = frameTimestamp - startTime + pausedElapsed
+    // Time since the last frame — used for incremental progress
+    const deltaMs = frameTimestamp - lastTickTime
+    lastTickTime = frameTimestamp
 
     // Scale race duration proportionally: 2200m takes longer than 1200m
     const raceDurationMs = (distance.value / BASE_DISTANCE) * BASE_DURATION_MS
@@ -102,16 +118,15 @@ export function useRaceAnimation(
       // Re-roll speed variance every VARIANCE_INTERVAL_MS for natural jittery movement
       const timeSinceLastVariance = elapsedMs - horseState.lastVarianceTime
       if (timeSinceLastVariance > VARIANCE_INTERVAL_MS) {
-        horseState.speed = (entry.horse.condition / 100) * getRandomVariance()
+        horseState.speed =
+          getBaseSpeed(entry.horse.condition) * getRandomVariance(entry.horse.condition)
         horseState.lastVarianceTime = elapsedMs
       }
 
-      // How much of the total race time has passed (0.0 → 1.0)
-      const fractionOfRaceCompleted = elapsedMs / raceDurationMs
-      // Convert to percentage and apply horse's speed multiplier
-      const adjustedProgressPercent = fractionOfRaceCompleted * 100 * horseState.speed
-      // Cap at 100% — can't go past the finish line
-      horseState.progress = Math.min(adjustedProgressPercent, 100)
+      // Delta-based: advance by (deltaMs / raceDuration) × 100 × speed
+      // This prevents teleporting when speed variance re-rolls
+      const deltaProgress = (deltaMs / raceDurationMs) * 100 * horseState.speed
+      horseState.progress = Math.min(horseState.progress + deltaProgress, 100)
       updatedPositions.set(entry.horse.id, horseState.progress)
 
       // Horse just crossed the finish line
@@ -121,7 +136,7 @@ export function useRaceAnimation(
       }
     }
 
-    // Advance sprite frame on interval (shared across all horses)
+    // Advance sprite frame on interval if enough time has passed (shared across all horses)
     // Loops back to frame 0 after reaching the last frame (16 → 0)
     const timeSinceLastFrame = frameTimestamp - lastFrameSwitch
     if (timeSinceLastFrame >= FRAME_INTERVAL_MS) {
@@ -164,6 +179,7 @@ export function useRaceAnimation(
     lastFrameSwitch = 0
     animationFrameId = requestAnimationFrame((firstFrameTimestamp) => {
       startTime = firstFrameTimestamp
+      lastTickTime = firstFrameTimestamp
       tick(firstFrameTimestamp)
     })
   }
@@ -185,8 +201,23 @@ export function useRaceAnimation(
     isRunning.value = true
     animationFrameId = requestAnimationFrame((resumeTimestamp) => {
       startTime = resumeTimestamp
+      lastTickTime = resumeTimestamp
       tick(resumeTimestamp)
     })
+  }
+
+  /** Stop the race and reset all state */
+  function stop(): void {
+    isRunning.value = false
+    pausedElapsed = 0
+    if (animationFrameId !== null) {
+      cancelAnimationFrame(animationFrameId)
+      animationFrameId = null
+    }
+    horseStates.clear()
+    finishedHorses = []
+    horsePositions.value = new Map()
+    frameCursor.value = 0
   }
 
   // Cleanup rAF on component unmount to prevent memory leaks
@@ -203,5 +234,6 @@ export function useRaceAnimation(
     start,
     pause,
     resume,
+    stop,
   }
 }

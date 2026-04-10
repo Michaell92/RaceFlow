@@ -1,7 +1,11 @@
 <template>
-  <q-card flat bordered class="horse-list-table">
+  <q-card class="horse-list-table shadow-2">
     <q-card-section class="horse-list-table__header">
-      <div class="text-h6">Horse List ({{ horses.length }})</div>
+      <div class="row items-center no-wrap">
+        <q-icon name="military_tech" size="1.25rem" color="primary" class="q-mr-sm" />
+        <div class="text-h6">Horse List</div>
+        <q-badge color="grey-7" :label="horses.length" class="q-ml-sm" />
+      </div>
     </q-card-section>
 
     <q-separator />
@@ -119,6 +123,10 @@ function getConditionColor(condition: number): string {
   &__table {
     flex: 1;
     overflow: auto;
+
+    :deep(tbody tr:hover) {
+      background: rgba(0, 0, 0, 0.03);
+    }
   }
 
   &__color-badge {
@@ -126,6 +134,7 @@ function getConditionColor(condition: number): string {
     height: 1rem;
     min-height: unset;
     padding: 0;
+    box-shadow: 0 0.0625rem 0.1875rem rgba(0, 0, 0, 0.2);
   }
 
   &__condition {

@@ -18,6 +18,7 @@ export const useRaceStore = defineStore('race', () => {
   const results = ref<RoundResult[]>([])
   const currentRoundIndex = ref(0)
   const gameState = ref<GameStatus>(GameStatus.IDLE)
+  const autoPlay = ref(false)
 
   /* === Getters === */
   const currentRound = computed(() => schedule.value[currentRoundIndex.value])
@@ -64,6 +65,16 @@ export const useRaceStore = defineStore('race', () => {
     }
   }
 
+  function toggleRace(): void {
+    if (gameState.value === GameStatus.READY || gameState.value === GameStatus.ROUND_FINISHED) {
+      startRace()
+    } else if (gameState.value === GameStatus.RACING) {
+      pauseRace()
+    } else if (gameState.value === GameStatus.PAUSED) {
+      resumeRace()
+    }
+  }
+
   function reset(): void {
     schedule.value = []
     results.value = []
@@ -76,6 +87,7 @@ export const useRaceStore = defineStore('race', () => {
     results,
     currentRoundIndex,
     gameState,
+    autoPlay,
     currentRound,
     currentRoundConfig,
     isLastRound,
@@ -84,6 +96,7 @@ export const useRaceStore = defineStore('race', () => {
     startRace,
     pauseRace,
     resumeRace,
+    toggleRace,
     completeRound,
     reset,
   }
