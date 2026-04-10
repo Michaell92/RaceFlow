@@ -8,10 +8,10 @@ import router from './router'
 
 const app = createApp(App)
 
-// Hold the Vue apps in an array for easy iteration
-const vueApps = [router, createPinia()]
+// Hold the Vue Plugins in an array for easy iteration
+const vuePlugins = [router, createPinia()]
 
-vueApps.forEach((vueApp) => app.use(vueApp))
+vuePlugins.forEach((vuePlugin) => app.use(vuePlugin))
 app.use(Quasar, quasarUserOptions)
 
 app.mount('#app')

@@ -191,7 +191,7 @@ describe('raceStore', () => {
       expect(raceStore.isLastRound).toBe(true)
     })
 
-    it('completedResults reflects all stored results', () => {
+    it('results reflects all stored results', () => {
       const horseStore = useHorseStore()
       horseStore.generateHorses()
       const raceStore = useRaceStore()
@@ -199,7 +199,7 @@ describe('raceStore', () => {
       raceStore.startRace()
       raceStore.completeRound(createMockResults(HORSES_PER_ROUND))
 
-      expect(raceStore.completedResults).toHaveLength(1)
+      expect(raceStore.results).toHaveLength(1)
     })
   })
 

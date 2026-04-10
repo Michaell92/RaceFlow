@@ -27,8 +27,6 @@ export const useRaceStore = defineStore('race', () => {
 
   const isLastRound = computed(() => currentRoundIndex.value === TOTAL_ROUNDS - 1)
 
-  const completedResults = computed(() => results.value)
-
   /* === Actions === */
   function generateProgram(): void {
     const horseStore = useHorseStore()
@@ -91,7 +89,6 @@ export const useRaceStore = defineStore('race', () => {
     currentRound,
     currentRoundConfig,
     isLastRound,
-    completedResults,
     generateProgram,
     startRace,
     pauseRace,

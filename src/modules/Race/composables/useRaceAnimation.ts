@@ -4,7 +4,7 @@ import type { RaceEntry, RaceResult } from '@/modules/Race/types/race.types'
 /* === Configuration === */
 
 const FRAME_COUNT = 16 // Total sprite frames per gallop cycle (frame_01..frame_16)
-const BASE_DURATION_MS = 15_00 // How long (ms) a 1200m race takes at condition=100 & variance=1
+const BASE_DURATION_MS = 10_000 // How long (ms) a 1200m race takes at condition=100 & variance=1
 const BASE_DISTANCE = 1200 // Reference distance that maps to BASE_DURATION_MS
 const SPEED_VARIANCE_MIN = 0.85 // Min random multiplier applied to horse speed
 const SPEED_VARIANCE_MAX_STRONG = 1.4 // Max variance for condition=100 (stable)
