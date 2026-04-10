@@ -206,7 +206,7 @@ export function useRaceAnimation(
     })
   }
 
-  /** Stop the race and reset all state */
+  /** Stop the race and reset all state to starting positions */
   function stop(): void {
     isRunning.value = false
     pausedElapsed = 0
@@ -216,7 +216,12 @@ export function useRaceAnimation(
     }
     horseStates.clear()
     finishedHorses = []
-    horsePositions.value = new Map()
+
+    const positions = new Map<number, number>()
+    for (const entry of entries.value) {
+      positions.set(entry.horse.id, 0)
+    }
+    horsePositions.value = positions
     frameCursor.value = 0
   }
 

@@ -57,7 +57,7 @@ const frames: Component[] = [
 ]
 
 const currentFrame = computed(() => {
-  if (!props.isRunning && props.position === 0) return frames[0]!
+  if (!props.isRunning || props.position >= 100) return frames[0]!
   return frames[props.frameCursor] ?? frames[0]!
 })
 </script>

@@ -68,7 +68,11 @@ watch(
       start()
     } else if (status === GameStatus.PAUSED) {
       pause()
-    } else if (status === GameStatus.READY) {
+    } else if (
+      status === GameStatus.READY ||
+      status === GameStatus.ROUND_FINISHED ||
+      status === GameStatus.FINISHED
+    ) {
       stop()
     }
 

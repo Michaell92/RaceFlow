@@ -20,9 +20,9 @@
         <q-expansion-item
           v-for="(round, index) in schedule"
           :key="round.config.roundNumber"
+          :model-value="index === currentRoundIndex"
           :label="`Round ${round.config.roundNumber}`"
           :caption="`${round.config.distance}m`"
-          :default-opened="index === currentRoundIndex"
           :header-class="getHeaderClass(index)"
           dense
         >
