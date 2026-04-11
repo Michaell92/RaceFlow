@@ -1,5 +1,10 @@
 <template>
-  <div class="race-horse" :style="{ transform: `translateX(${position}%)` }">
+  <div
+    class="race-horse"
+    :style="{ transform: `translateX(${position}%)` }"
+    role="img"
+    :aria-label="`${name} at ${Math.round(position)}% of track`"
+  >
     <div class="race-horse__sprite">
       <component :is="currentFrame" :color="color" />
     </div>

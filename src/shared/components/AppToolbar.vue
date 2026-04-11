@@ -1,5 +1,5 @@
 <template>
-  <q-toolbar class="app-toolbar bg-dark text-white">
+  <q-toolbar class="app-toolbar bg-dark text-white" role="toolbar" aria-label="Race controls">
     <q-toolbar-title class="app-toolbar__title">
       <img src="/horseracing.png" alt="RaceFlow" class="app-toolbar__logo" />
       RaceFlow
@@ -9,6 +9,8 @@
       v-if="statusLabel"
       :color="statusColor"
       :label="statusLabel"
+      :aria-label="`Game status: ${statusLabel}`"
+      role="status"
       class="q-mr-md app-toolbar__status"
     />
 
@@ -17,6 +19,7 @@
     <q-toggle
       :model-value="autoPlay"
       label="Auto-play"
+      aria-label="Toggle auto-play between rounds"
       dark
       color="amber"
       class="q-mr-lg"
@@ -33,6 +36,7 @@
         unelevated
         icon="casino"
         :disable="isGenerateDisabled"
+        aria-label="Generate race program"
         padding="0.5rem 1.25rem"
         class="app-toolbar__btn"
         @click="$emit('generate')"
@@ -43,6 +47,7 @@
         :color="raceButtonColor"
         :icon="raceButtonIcon"
         :disable="isRaceDisabled"
+        :aria-label="raceButtonLabel + ' race'"
         no-caps
         no-wrap
         unelevated

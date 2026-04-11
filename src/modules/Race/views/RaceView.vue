@@ -1,9 +1,9 @@
 <template>
-  <div class="race-view">
-    <div class="race-view__left">
+  <div class="race-view" role="main">
+    <section class="race-view__left" aria-label="Horse list">
       <HorseListTable :horses="horseStore.horses" />
-    </div>
-    <div class="race-view__center">
+    </section>
+    <section class="race-view__center" aria-label="Race track">
       <RaceTrack
         :entries="currentEntries"
         :horse-positions="horsePositions"
@@ -12,7 +12,7 @@
         :round-label="roundLabel"
         :distance="currentDistance"
       />
-    </div>
+    </section>
 
     <RaceViewSidebar
       :schedule="raceStore.schedule"

@@ -17,7 +17,12 @@
       <p class="text-body2 text-grey-6">Generate a program to start racing</p>
     </div>
 
-    <div v-else class="race-track__surface">
+    <div
+      v-else
+      class="race-track__surface"
+      role="img"
+      :aria-label="`Race track with ${entries.length} horses`"
+    >
       <div class="race-track__markers">
         <span
           v-for="pct in [25, 50, 75]"
@@ -34,6 +39,7 @@
         :key="entry.horse.id"
         class="race-track__lane"
         :class="{ 'race-track__lane--odd': entry.lane % 2 === 1 }"
+        :aria-label="`Lane ${entry.lane}: ${entry.horse.name}`"
       >
         <span class="race-track__lane-number text-caption text-weight-medium">
           {{ entry.lane }}

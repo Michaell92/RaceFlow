@@ -32,6 +32,7 @@
             :style="{ backgroundColor: props.row.color }"
             rounded
             class="horse-list-table__color-badge"
+            :aria-label="`Horse color: ${props.row.color}`"
           />
         </q-td>
       </template>
@@ -45,6 +46,7 @@
               rounded
               size="1.25rem"
               class="horse-list-table__condition-bar"
+              :aria-label="`Condition: ${props.row.condition} out of 100`"
             >
               <div class="absolute-full flex flex-center">
                 <span class="horse-list-table__condition-label text-caption text-weight-bold">

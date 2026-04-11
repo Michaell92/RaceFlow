@@ -1,29 +1,23 @@
 # RaceFlow
 
-This is a horse racing simulation game written with Vue 3, TypeScript and Quasar. Vite as bundler and Cypress/Vitest for testing.
+**[Live Demo](https://raceflow.netlify.app/)**
 
-It is architected following a DDD (Domain-Driven Design) approach for scalability and maintainability.
-Domain logic is separated into modules and shared code goes into the shared folder.
+Horse racing simulation game built with Vue 3 and and Quasar. Vite as bundler, Cypress/Vitest for testing, GitHub Actions for CI.
 
-Development plan is outlined in `plan.md`.
-Coding guidelines are written in `CLAUDE.md`.
+- Architected following a DDD (Domain-Driven Design) approach — each business domain is a self-contained module
+- Animation uses `requestAnimationFrame` with CSS transforms for GPU-accelerated rendering
 
-## Setup guidelines
+Development plan is outlined in `plan.md`. Coding guidelines are written in `CLAUDE.md`.
 
-## Recommended IDE Setup
+## Tech Stack
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+Vue 3 (Composition API) · TypeScript · Pinia · Quasar · Vite · Vitest · Cypress
 
-## Recommended Browser Setup
+## Setup
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+**IDE**: [VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
 
-## Project Setup
+### Install
 
 ```sh
 npm install

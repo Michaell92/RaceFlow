@@ -1,8 +1,12 @@
 <template>
-  <div class="race-sidebar" :class="{ 'race-sidebar--open': isOpen }">
+  <aside
+    class="race-sidebar"
+    :class="{ 'race-sidebar--open': isOpen }"
+    aria-label="Program and results"
+  >
     <RaceProgram :schedule="schedule" :current-round-index="currentRoundIndex" />
     <RaceResults :results="results" />
-  </div>
+  </aside>
 
   <!-- Backdrop (small screens only) -->
   <Transition name="fade">
@@ -15,6 +19,7 @@
     round
     color="primary"
     :icon="isOpen ? 'chevron_right' : 'format_list_numbered'"
+    :aria-label="isOpen ? 'Close sidebar' : 'Open program and results'"
     @click="isOpen = !isOpen"
   />
 </template>
